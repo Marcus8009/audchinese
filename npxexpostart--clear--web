@@ -1,3 +1,5 @@
+npx expo start --clear --tunnel
 npx expo start --clear --dev-client
 
 npx eas build -p android --profile production
+https://expo.dev/accounts/marcusvos93/projects/audchinese/builds/5f5b1eb1-ba03-41ed-9af2-1112c08c4133
