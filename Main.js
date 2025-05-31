@@ -1,8 +1,9 @@
 // Main.js - Improved Navigation
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'react-native';
+import { Audio } from 'expo-av';  // Import Audio for background playback
 
 import DirectoryScreen from './DirectoryScreen';
 import BatchListScreen from './BatchListScreen';
@@ -11,6 +12,16 @@ import App from './App'; // Your flashcard screen
 const Stack = createStackNavigator();
 
 export default function Main() {
+  useEffect(() => {
+    // Configure background audio playback
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+      playThroughEarpieceAndroid: false,
+    });
+  }, []);
+
   return (
     <NavigationContainer
       theme={{
