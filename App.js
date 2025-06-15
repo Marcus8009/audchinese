@@ -1,7 +1,8 @@
-// Updated App.js with dynamic audio loading
+// Updated App.js with dynamic audio loading and background audio support
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
+import { Audio } from 'expo-av'; // Add this import for background audio
 import styles from './styles';
 import sentences from './allSentences.json';
 import { playSentence, unloadSound } from './audioPlayer';
@@ -28,6 +29,25 @@ export default function App({ route }) {
   const soundRef = useRef(null);
   const [repeatEnglish, setRepeatEnglish] = useState(1);
   const [repeatChinese, setRepeatChinese] = useState(2);
+
+  // Configure audio for background playback when component mounts
+  useEffect(() => {
+    const setupAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+          playThroughEarpieceAndroid: false,
+        });
+        console.log('Flashcard screen: Background audio configured');
+      } catch (error) {
+        console.error('Error configuring audio in flashcard screen:', error);
+      }
+    };
+    
+    setupAudio();
+  }, []);
 
   // Load sentences and audio manifest for the current group+batch
   useEffect(() => {
@@ -90,6 +110,15 @@ export default function App({ route }) {
     return () => unloadSound(soundRef);
   }, [index, isPlaying, speed, sentencesForBatch, repeatEnglish, repeatChinese, batchAudioManifest]);
 
+  // Cleanup audio when component unmounts
+  useEffect(() => {
+    return () => {
+      if (soundRef.current) {
+        unloadSound(soundRef);
+      }
+    };
+  }, []);
+
   const next = () => setIndex(i => (i + 1) % sentencesForBatch.length);
   const prev = () => setIndex(i => (i - 1 + sentencesForBatch.length) % sentencesForBatch.length);
 
@@ -148,4 +177,3 @@ export default function App({ route }) {
     </View>
   );
 }
-

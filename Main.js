@@ -1,9 +1,9 @@
-// Main.js - Improved Navigation
+// Main.js - Improved Navigation with Enhanced Background Audio
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'react-native';
-import { Audio } from 'expo-av';  // Import Audio for background playback
+import { Audio } from 'expo-av';
 
 import DirectoryScreen from './DirectoryScreen';
 import BatchListScreen from './BatchListScreen';
@@ -13,13 +13,26 @@ const Stack = createStackNavigator();
 
 export default function Main() {
   useEffect(() => {
-    // Configure background audio playback
-    Audio.setAudioModeAsync({
-      staysActiveInBackground: true,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
-      playThroughEarpieceAndroid: false,
-    });
+    // Enhanced audio configuration for Android background playback
+    const setupAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          // CRITICAL: Enable background playback
+          staysActiveInBackground: true,
+          
+          // Android-only settings
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+          playThroughEarpieceAndroid: false,
+        });
+        
+        console.log('Android background audio configured successfully');
+      } catch (error) {
+        console.error('Failed to configure background audio:', error);
+      }
+    };
+    
+    setupAudio();
   }, []);
 
   return (
